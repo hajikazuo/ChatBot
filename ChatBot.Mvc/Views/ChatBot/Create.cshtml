@@ -1,0 +1,37 @@
+﻿@{
+    var pageName = "Cadastrar informação";
+    ViewData["Title"] = pageName;
+}
+
+<div class="container-xl">
+    <div class="row row-cards">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">@pageName</h4>
+                </div>
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card-body">
+                        <div class="row g-5">
+                            <div class="form-group">
+                                <label for="message" class="form-label"></label>
+                                <input name="message" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary ms-auto">Salvar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Html.Raw(ViewBag.Confirm)
+}
+

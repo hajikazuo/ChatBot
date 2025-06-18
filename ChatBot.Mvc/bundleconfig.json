@@ -1,0 +1,20 @@
+﻿[
+  {
+    "outputFileName": "wwwroot/bundler/js/chatbot.all.min.js",
+    "inputFiles": [
+      "wwwroot/js/demo.js",
+      "wwwroot/js/tabler.js",
+      "node_modules/axios/dist/axios.min.js",
+      "node_modules/toastr/build/toastr.min.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/bundler/css/chatbot.all.min.css",
+    "inputFiles": [
+      "wwwroot/css/demo.css",
+      "wwwroot/css/tabler.css",
+      "wwwroot/icons/tabler-icons.css",
+      "node_modules/toastr/build/toastr.min.css"
+    ]
+  }
+]

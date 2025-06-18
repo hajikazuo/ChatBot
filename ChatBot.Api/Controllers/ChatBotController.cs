@@ -30,7 +30,7 @@ namespace ChatBot.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(string message)
+        public async Task<IActionResult> Add([FromBody] string message)
         {
             try
             {

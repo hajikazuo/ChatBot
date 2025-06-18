@@ -1,0 +1,31 @@
+@* @{
+    var user = await UserManager.GetUserAsync(User);
+    var principalRole = string.Empty;
+
+    if (user != null)
+    {
+        var roles = await UserManager.GetRolesAsync(user);
+        principalRole = roles.FirstOrDefault();
+    }
+}
+
+@if (user != null)
+{
+    <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+        <div class="avatar avatar-sm rounded-circle bg-primary text-white text-center fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            @user.UserName?.Substring(0, 2).ToUpper()
+        </div>
+        <div class="d-none d-xl-block ps-2">
+            <div>@user.UserName</div>
+            <div class="mt-1 small text-secondary">@principalRole</div>
+        </div>
+    </a>
+
+    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+        <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Edit" asp-route-id="@user.Id">Minha conta</a>
+        <ul class="navbar-nav">
+            <a class="dropdown-item" asp-area="" asp-controller="Auth" asp-action="Logout">Logout</a>
+        </ul>
+    </div>
+}
+ *@
