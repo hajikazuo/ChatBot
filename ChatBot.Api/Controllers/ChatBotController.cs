@@ -2,6 +2,7 @@
 using ChatBot.Api.Models;
 using ChatBot.Api.Models.Dtos;
 using ChatBot.Common.Hubs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace ChatBot.Api.Controllers
             _baseUrl = config["Ollama:BaseUrl"] ?? throw new ArgumentNullException("Ollama:BaseUrl is not configured");
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] string message)
         {

@@ -1,18 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatBot.Mvc.Controllers
 {
+    [Authorize(Policy = "RequireAdminRole")]
     public class ChatBotController : Controller
     {
-        private readonly IConfiguration _iconfiguration;
-        private readonly string _apiUrl;
-        public ChatBotController(IConfiguration iconfiguration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ChatBotController(IHttpClientFactory httpClientFactory)
         {
-            _iconfiguration = iconfiguration;
-            _apiUrl = _iconfiguration["ApiUrl"] ?? throw new ArgumentNullException("Url is missing.");
+            _httpClientFactory = httpClientFactory;
         }
+
 
         public IActionResult Create()
         {
@@ -24,15 +26,24 @@ namespace ChatBot.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string message)
         {
-            var httpClient = new HttpClient();
+            var client = _httpClientFactory.CreateClient("ApiClient");
 
+            var jwtToken = User.Claims.FirstOrDefault(c => c.Type == "JWT")?.Value;
+
+            if (string.IsNullOrEmpty(jwtToken))
+            {
+                TempData["Confirm"] = "<script>$(document).ready(function () {MostraErro('Erro', 'Token de autenticação ausente!');})</script>";
+                return RedirectToAction(nameof(Create));
+            }
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwtToken);
             var json = JsonSerializer.Serialize(message);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = await httpClient.PostAsync($"{_apiUrl}/api/ChatBot/Add", content);
-            TempData["Confirm"] = request.IsSuccessStatusCode
+            var response = await client.PostAsync("/api/ChatBot/Add", content);
+            TempData["Confirm"] = response.IsSuccessStatusCode
                 ? "<script>$(document).ready(function () {MostraConfirm('Sucesso', 'Cadastrado com sucesso!');})</script>"
-                : "<script>$(document).ready(function () {MostraConfirm('Erro', 'Erro ao cadastrar!');})</script>";
+                : "<script>$(document).ready(function () {MostraErro('Erro', 'Erro ao cadastrar!');})</script>";
 
             return RedirectToAction(nameof(Create));
         }

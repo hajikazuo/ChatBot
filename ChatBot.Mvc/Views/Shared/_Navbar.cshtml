@@ -5,10 +5,24 @@
         </button>
         <div class="navbar-nav flex-row order-md-last">
             <div class="nav-item dropdown">
-                @* @if (User.Identity.IsAuthenticated)
+                @if (User.Identity.IsAuthenticated)
                 {
                     @await Html.PartialAsync("_LoginPartial")
-                } *@
+                }
+                else
+                {
+                    <div class="nav-item d-flex me-3">
+                        <div class="btn-list">
+                            <a asp-area="" asp-controller="Auth" asp-action="Register" class="btn btn-5">
+                                Crie sua conta
+                            </a>
+                            <a asp-area="" asp-controller="Auth" asp-action="Login" class="btn btn-6">
+                                <i class="ti ti-login"></i>
+                                Login
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
         <div class="collapse navbar-collapse" id="navbar-menu">

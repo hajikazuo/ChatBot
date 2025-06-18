@@ -1,0 +1,48 @@
+﻿@using ChatBot.Common.Dtos.Auth
+@model LoginDto
+@{
+    var pageName = "Página de login";
+    ViewData["Title"] = pageName;
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="container container-tight my-5 px-lg-5">
+    <div class="text-center mb-4">
+        <a href="." class="navbar-brand navbar-brand-autodark">
+            <img src="~/img/logo.png" height="360" alt="Logo">
+        </a>
+    </div>
+
+    <div class="card card-md">
+        <div class="card-body">
+            <h2 class="h3 text-center mb-3">
+                Acesse sua conta
+            </h2>
+
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" type="email" class="form-control" id="email" placeholder="Insira seu e-mail" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" id="password" placeholder="Insira sua senha" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-center text-secondary mt-3">Ainda não possui conta? <a asp-action="Register" tabindex="-1">Cadastre-se</a></div>
+</div>
+
+@section scripts {
+    @Html.Raw(ViewBag.Confirm)
+}
+
+

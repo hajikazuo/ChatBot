@@ -23,16 +23,19 @@
                         </span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="ChatBot" asp-action="Create">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <i class="ti ti-plus"></i>
-                        </span>
-                        <span class="nav-link-title">
-                            Cadastrar informação
-                        </span>
-                    </a>
-                </li>
+                @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="ChatBot" asp-action="Create">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="ti ti-plus"></i>
+                            </span>
+                            <span class="nav-link-title">
+                                Cadastrar informação
+                            </span>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
     </div>

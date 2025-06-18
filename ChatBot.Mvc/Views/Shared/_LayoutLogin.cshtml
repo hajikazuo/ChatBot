@@ -1,0 +1,24 @@
+﻿
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ventra</title>
+    <link href="~/css/tabler.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="row g-0 flex-fill">
+        <div class="col-12 col-lg-6 col-xl-4 border-top-wide border-primary d-flex flex-column justify-content-center">
+            @RenderBody()
+        </div>
+        <div class="col-12 col-lg-6 col-xl-8 d-none d-lg-block">
+            <div class="bg-cover h-100 min-vh-100" style="background-image: url(/img/banner.png)"></div>
+        </div>
+    </div>
+
+    <script src="~/js/tabler.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
