@@ -1,3 +1,3 @@
-﻿export function sendQuestionApi(question) {
-    return axios.get(`/Home/Chat`, { params: { question } });
+﻿export function sendQuestionApi(question, connectionId) {
+    return axios.get(`/Home/Chat`, { params: { question, connectionId } });
 }

@@ -1,6 +1,7 @@
 ﻿using ChatBot.Api.Data;
 using ChatBot.Api.Models;
 using ChatBot.Api.Models.Dtos;
+using ChatBot.Common.Dtos;
 using ChatBot.Common.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +74,7 @@ namespace ChatBot.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Ask([FromBody] string question)
+        public async Task<IActionResult> Ask([FromBody] ChatRequestDto dto)
         {
             try
             {
@@ -81,7 +82,7 @@ namespace ChatBot.Api.Controllers
                 request.Content = new StringContent(JsonSerializer.Serialize(new OllamaRequestDto()
                 {
                     Model = "nomic-embed-text",
-                    Prompt = question
+                    Prompt = dto.Question
                 }), System.Text.Encoding.UTF8, "application/json");
 
                 var response = await _client.SendAsync(request);
@@ -113,7 +114,7 @@ namespace ChatBot.Api.Controllers
                 }
 
                 var context = string.Join("\n---\n", topMatches.Select(x => x.TextEmbedding.Message));
-                var prompt = $"Context:\n{context}\n\n Question: {question}\n";
+                var prompt = $"Context:\n{context}\n\n Question: {dto.Question}\n";
 
                 var chatRequest = new OllamaRequestDto
                 {
@@ -146,7 +147,7 @@ namespace ChatBot.Api.Controllers
                 var fullResponse = string.Join("", fragments.Select(f => f.Response));
                 var finalFragment = fragments.LastOrDefault(f => f.Done);
 
-                await _hub.Clients.All.SendAsync("ReceiveMessage", new
+                await _hub.Clients.Client(dto.ConnectionId).SendAsync("ReceiveMessage", new
                 {
                     message = fullResponse
                 });

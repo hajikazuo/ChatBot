@@ -24,12 +24,17 @@ namespace ChatBot.Mvc.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Chat(string question)
+        public async Task<IActionResult> Chat(string question, string connectionId)
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            var json = JsonSerializer.Serialize(question);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var payload = new
+            {
+                question = question,
+                connectionId = connectionId
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("/api/ChatBot/Ask", content);
 

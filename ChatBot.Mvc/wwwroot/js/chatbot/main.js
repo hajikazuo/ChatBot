@@ -6,6 +6,7 @@ let loadingMessageDiv = null;
 
 function sendQuestion() {
     const question = elements.input.value.trim();
+    const connectionId = connection.connectionId;
     if (!question || loadingMessageDiv) return;
 
     elements.sendBtn.disabled = true;
@@ -13,7 +14,7 @@ function sendQuestion() {
     addMessage(question, "user");
     loadingMessageDiv = addMessage("", "loading");
 
-    sendQuestionApi(question)
+    sendQuestionApi(question, connectionId)
         .then(() => {
             elements.input.value = "";
         })
