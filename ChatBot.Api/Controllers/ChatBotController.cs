@@ -1,7 +1,9 @@
 ﻿using ChatBot.Api.Data;
 using ChatBot.Api.Models;
 using ChatBot.Api.Models.Dtos;
+using ChatBot.Common.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RT.Comb;
 using System.Text.Json;
@@ -12,13 +14,15 @@ namespace ChatBot.Api.Controllers
     [ApiController]
     public class ChatBotController : ControllerBase
     {
+        private IHubContext<ChatHub> _hub;
         private readonly HttpClient _client;
         private readonly ChatBotDbContext _context;
         private readonly ICombProvider _comb;
         private readonly string _baseUrl;
 
-        public ChatBotController(HttpClient client, ChatBotDbContext context, ICombProvider comb, IConfiguration config)
+        public ChatBotController(IHubContext<ChatHub> hub, HttpClient client, ChatBotDbContext context, ICombProvider comb, IConfiguration config)
         {
+            _hub = hub;
             _client = client;
             _context = context;
             _comb = comb;
@@ -139,6 +143,11 @@ namespace ChatBot.Api.Controllers
 
                 var fullResponse = string.Join("", fragments.Select(f => f.Response));
                 var finalFragment = fragments.LastOrDefault(f => f.Done);
+
+                await _hub.Clients.All.SendAsync("ReceiveMessage", new
+                {
+                    message = fullResponse
+                });
 
                 return Ok(new
                 {

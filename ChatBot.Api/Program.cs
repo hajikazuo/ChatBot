@@ -1,4 +1,5 @@
 using ChatBot.Api.Data;
+using ChatBot.Common.Hubs;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,21 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ChatBotDbContext>(o => o.UseSqlServer(connectionString));
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddSingleton(RT.Comb.Provider.Sql);
+builder.Services.AddSignalR();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ChatBotOrigins", builder =>
+    {
+        builder.WithOrigins(
+           "https://localhost:7288"
+        )
+      .AllowAnyHeader()
+      .AllowAnyMethod()
+      .AllowCredentials()
+      .SetIsOriginAllowedToAllowWildcardSubdomains();
+    });
+});
 
 var app = builder.Build();
 
@@ -29,19 +45,19 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseCors("ChatBotOrigins");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseCors();
-
 app.MapControllers();
+
+app.MapHub<ChatHub>("/chatHub", options =>
+{
+    options.AllowStatefulReconnects = true;
+});
 
 app.Run();

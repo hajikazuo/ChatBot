@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var urlApi = ViewBag.urlApi as string;
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Pergunte algo ao ChatBot</h4>
+
+            <div class="mb-3">
+                <input type="text" id="questionInput" class="form-control" placeholder="Digite sua pergunta..." />
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="sendQuestion()">Enviar</button>
+
+            <div class="alert alert-info mt-4 d-none" id="responseBox"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    <script>
+        const input = document.getElementById("questionInput");
+        const responseBox = document.getElementById("responseBox");
+
+        function sendQuestion() {
+
+            const question = input.value;
+
+            if (!question) return;
+
+            axios.get(`/Home/Chat`, {
+                params: { question }
+            })
+            .then(() => input.value = "")
+            .catch(err => console.error("Erro:", err));
+        }
+
+        Object.defineProperty(WebSocket, 'OPEN', { value: 1, });
+         const urlHub = "@(urlApi)/chatHub";
+         console.log(urlHub, {skipNegotiation: true, transport: signalR.HttpTransportType.WebSockets});
+         const connection = new signalR.HubConnectionBuilder()
+              .withUrl(urlHub)
+             .configureLogging(signalR.LogLevel.Trace)
+             .withAutomaticReconnect()
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+            } catch (err) {
+                console.log(err);
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.onclose(async () => {
+            await start();
+        });
+
+        start();
+
+        connection.on("ReceiveMessage", function (data) {
+            console.log(data);
+
+            responseBox.classList.remove("d-none");
+            responseBox.textContent = data.message;
+
+        });
+    </script>
+}
